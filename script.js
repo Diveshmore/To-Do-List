@@ -12,11 +12,6 @@ const scheduled = new Map(); // map taskId -> timeoutId
 let currentFilter = "all";
 let currentSearch = "";
 
-
-// Example usage
-updateDeadlineTracker(2); // "Deadline in 2 days"
-
-
 /* Elements */
 const taskInput = document.getElementById("taskInput");
 const deadlineInput = document.getElementById("deadlineInput");
@@ -30,7 +25,6 @@ const searchInput = document.getElementById("searchInput");
 const filterButtons = document.querySelectorAll(".filter");
 const dashboardCards = document.querySelectorAll(".dashboard-cards .card");
 const toastEl = document.getElementById("toast");
-const themeToggle = document.getElementById("themeToggle");
 
 /* helpers */
 function saveTasks(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks)); }
@@ -49,59 +43,13 @@ function showToast(message, ms = 4500){
 }
 
 function notifyUser(title, body){
-  // Try Notification API if granted
   if ("Notification" in window && Notification.permission === "granted"){
     try { new Notification(title, {body}); return; } catch(e){}
   }
-  // fallback to in-page toast
   showToast(`${title} — ${body}`, 6000);
 }
 
-/* Scheduling notifications safely (no double-schedule) */
-function scheduleNotificationForTask(task){
-  // only for pending tasks
-  if (task.completed) return;
-  if (!task.deadline) return;
-
-  const now = Date.now();
-  const deadlineMs = new Date(task.deadline).getTime();
-  const notifyAt = deadlineMs - 60000; // 1 minute before
-  const delay = notifyAt - now;
-
-  // clear previous if scheduled
-  if (scheduled.has(task.id)){
-    clearTimeout(scheduled.get(task.id));
-    scheduled.delete(task.id);
-  }
-
-  if (delay > 0){
-    // ensure notifications permission requested at least once
-    if ("Notification" in window && Notification.permission === "default"){
-      Notification.requestPermission().catch(()=>{/*ignore*/});
-    }
-
-    const to = setTimeout(()=>{
-      notifyUser("⏰ Task Reminder", `"${task.text}" due at ${formatDeadline(task.deadline)}`);
-      scheduled.delete(task.id);
-    }, delay);
-
-    scheduled.set(task.id, to);
-  } else if (deadlineMs > now && delay <= 0){
-    // If notify time already passed but deadline is in future (rare edge), show soon
-    // Do nothing; immediate notification would be intrusive.
-  } else {
-    // already past deadline — no schedule
-  }
-}
-
-function cancelScheduledNotification(taskId){
-  if (scheduled.has(taskId)){
-    clearTimeout(scheduled.get(taskId));
-    scheduled.delete(taskId);
-  }
-}
-
-/* Rendering tasks with optional filter and search */
+/* Rendering tasks */
 function renderTasks(filter = currentFilter, search = currentSearch){
   currentFilter = filter;
   currentSearch = search || "";
@@ -110,11 +58,9 @@ function renderTasks(filter = currentFilter, search = currentSearch){
   completedList.innerHTML = "";
 
   let pendingCount = 0, completedCount = 0, overdueCount = 0, todayCount = 0;
-
   const todayISO = new Date().toISOString().split("T")[0];
 
   tasks.forEach(task => {
-    // search filter
     if (currentSearch && !task.text.toLowerCase().includes(currentSearch.toLowerCase())) return;
 
     const deadlineMs = task.deadline ? new Date(task.deadline).getTime() : null;
@@ -123,13 +69,11 @@ function renderTasks(filter = currentFilter, search = currentSearch){
     const dueDateISO = task.deadline ? new Date(task.deadline).toISOString().split("T")[0] : null;
     const isToday = !task.completed && dueDateISO === todayISO;
 
-    // compute counts
     if (!task.completed) pendingCount++;
     if (task.completed) completedCount++;
     if (isOverdue) overdueCount++;
     if (isToday) todayCount++;
 
-    // determine if should be rendered under current filter
     let shouldRender = true;
     if (filter === "pending" && task.completed) shouldRender = false;
     if (filter === "completed" && !task.completed) shouldRender = false;
@@ -139,18 +83,15 @@ function renderTasks(filter = currentFilter, search = currentSearch){
 
     if (!shouldRender) return;
 
-    // build DOM
     const li = document.createElement("li");
     li.className = "task-item";
 
-    // Left area
     const left = document.createElement("div");
     left.className = "task-left";
 
     const chk = document.createElement("input");
     chk.type = "checkbox";
     chk.checked = !!task.completed;
-    chk.setAttribute("aria-label", `Mark ${task.text} completed`);
 
     const meta = document.createElement("div");
     meta.className = "task-meta";
@@ -162,71 +103,58 @@ function renderTasks(filter = currentFilter, search = currentSearch){
     const sub = document.createElement("div");
     sub.className = "task-sub";
 
-    // deadline badge
     const deadlineSpan = document.createElement("span");
     deadlineSpan.textContent = task.deadline ? formatDeadline(task.deadline) : "No deadline";
     deadlineSpan.className = "deadline-badge";
 
-    // color code badge by urgency
     if (deadlineMs){
       const diff = deadlineMs - now;
       if (diff < 0) { deadlineSpan.classList.add("deadline-overdue"); }
       else if (diff < 86400000) { deadlineSpan.classList.add("deadline-soon"); }
     }
 
-    // category pill
     const categorySpan = document.createElement("span");
     categorySpan.className = "category-pill";
     categorySpan.textContent = task.category || "General";
-    // simple color map
     const colors = { Work: "#007bff", Study: "#17a2b8", Personal: "#6f42c1", Fitness: "#28a745" };
     categorySpan.style.background = colors[task.category] || "#6c757d";
 
     sub.appendChild(deadlineSpan);
     sub.appendChild(categorySpan);
-
     meta.appendChild(title);
     meta.appendChild(sub);
 
     left.appendChild(chk);
     left.appendChild(meta);
 
-    // right actions
     const actions = document.createElement("div");
     actions.className = "task-actions";
 
     const del = document.createElement("button");
     del.className = "delete-btn";
     del.textContent = "Delete";
-    del.setAttribute("aria-label", `Delete ${task.text}`);
 
     actions.appendChild(del);
 
     li.appendChild(left);
     li.appendChild(actions);
 
-    // append to correct list
     if (task.completed) completedList.appendChild(li);
     else pendingList.appendChild(li);
 
-    // event listeners
     chk.addEventListener("change", ()=>{
       task.completed = chk.checked;
-      if (task.completed) cancelScheduledNotification(task.id);
-      else scheduleNotificationForTask(task);
       saveTasks();
       renderTasks(currentFilter, currentSearch);
     });
 
     del.addEventListener("click", ()=>{
-      cancelScheduledNotification(task.id);
       tasks = tasks.filter(t => t.id !== task.id);
       saveTasks();
       renderTasks(currentFilter, currentSearch);
     });
   });
 
-  // update progress & dashboard
   const total = pendingCount + completedCount;
   progressText.textContent = `${completedCount}/${total} tasks completed`;
   const pct = total === 0 ? 0 : Math.round((completedCount / total) * 100);
@@ -238,7 +166,6 @@ function renderTasks(filter = currentFilter, search = currentSearch){
   document.getElementById("overdueTasks").textContent = overdueCount;
   document.getElementById("todayTasks").textContent = todayCount;
 
-  // update active UI for dashboard and filter buttons
   dashboardCards.forEach(c => c.classList.toggle("active", c.dataset.filter === currentFilter));
   filterButtons.forEach(b => b.classList.toggle("active", b.dataset.filter === currentFilter));
 }
@@ -258,9 +185,7 @@ addBtn.addEventListener("click", ()=>{
   const newTask = { id, text, deadline, category, completed:false, createdAt: new Date().toISOString() };
   tasks.push(newTask);
   saveTasks();
-  scheduleNotificationForTask(newTask);
   renderTasks("all", "");
-  // clear inputs
   taskInput.value = "";
   deadlineInput.value = "";
 });
@@ -275,33 +200,25 @@ filterButtons.forEach(btn => btn.addEventListener("click", ()=>{
   renderTasks(f, searchInput.value.trim());
 }));
 
-/* Dashboard cards clickable */
 dashboardCards.forEach(card => {
   card.addEventListener("click", ()=>{
     const f = card.dataset.filter;
     renderTasks(f, searchInput.value.trim());
-    // announce UI state via aria-pressed
     dashboardCards.forEach(c => c.setAttribute("aria-pressed", (c === card).toString()));
   });
 });
 
 /* Theme toggle */
-themeToggle.addEventListener("click", ()=>{
+const themeToggle = document.getElementById("themeToggle");
+themeToggle.addEventListener("click", () => {
   document.body.classList.toggle("dark");
-  const on = document.body.classList.contains("dark");
-  themeToggle.textContent = on ? "☀️ Light" : "🌙 Dark";
-  themeToggle.setAttribute("aria-pressed", String(on));
+  const isDark = document.body.classList.contains("dark");
+  themeToggle.textContent = isDark ? "☀️ Light Mode" : "🌙 Dark Mode";
+  themeToggle.setAttribute("aria-pressed", isDark);
 });
 
-/* On load: schedule notifications for pending tasks */
+/* Init */
 function init(){
-  // schedule notifications for existing tasks
-  tasks.forEach(task => {
-    scheduleNotificationForTask(task);
-  });
-
-  // initial render
   renderTasks("all", "");
 }
-
 init();
