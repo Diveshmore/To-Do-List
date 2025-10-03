@@ -1,4 +1,4 @@
-:root{
+:root {
   --bg: #f3f6fa;
   --card: #ffffff;
   --muted: #6c757d;
@@ -30,7 +30,6 @@ html,body{height:100%;margin:0;background:var(--bg);color:#111;}
 .card{display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:center;padding:14px;border-radius:10px;background:linear-gradient(180deg,#fafafa,#f1f7f4);border:1px solid rgba(0,0,0,0.03);cursor:pointer;transition:transform .18s ease,box-shadow .18s ease;outline:none;}
 .card:hover{transform:translateY(-6px);box-shadow:0 10px 30px rgba(16,64,32,0.08);}
 .card.active{box-shadow:0 14px 34px rgba(16,64,32,0.14);transform:translateY(-8px);border:1px solid rgba(31,163,108,0.15);}
-
 .card-title{font-size:0.9rem;color:var(--muted)}
 .card-value{font-size:1.25rem;font-weight:700;color:#0b5132}
 
@@ -80,14 +79,73 @@ html,body{height:100%;margin:0;background:var(--bg);color:#111;}
 /* Active filter / state */
 .filter.active, .card.active{background:linear-gradient(90deg,#e9fdf3,#e1fbef);}
 
-/* Dark mode */
-.dark{background:#0f1720;color:#e6eef0}
-.dark .site-header{background:linear-gradient(135deg,#0b3b2e,#072d24)}
-.dark .card{background:linear-gradient(180deg,#222,#1a1a1a);border:1px solid rgba(255,255,255,0.03)}
-.dark .add-task,.dark .controls,.dark .progress,.dark .tasks,.dark .dashboard{background:#12141a;color:#d9dde0}
-.dark .task-item{background:#0f1412;border:1px solid rgba(255,255,255,0.03)}
-.dark .progress-bar{background:#0d1113}
-.dark #progressFill{background:linear-gradient(90deg,#2db57c,#1ab06a)}
+/* Dark Mode */
+.dark {
+  background: #222;
+  color: #ddd;
+}
+
+.dark .site-header {
+  background: #333;
+  color: #eee;
+}
+
+.dark .card {
+  background: linear-gradient(180deg, #333, #2a2a2a);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.dark .card-title { color: #bbb; }
+.dark .card-value { color: #9be7c4; }
+
+.dark .add-task,
+.dark .controls,
+.dark .progress,
+.dark .tasks {
+  background: #333;
+  color: #ddd;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.dark .task-item {
+  background: #444;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.dark .task-title { color: #eee; }
+.dark .task-sub { color: #bbb; }
+
+.dark .deadline-badge {
+  background: #2d2d2d;
+  color: #ddd;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.dark .deadline-overdue {
+  background: #5a2a2a;
+  color: #ffbaba;
+}
+.dark .deadline-soon {
+  background: #5a4a2a;
+  color: #ffd78a;
+}
+
+.dark .filter {
+  background: #555;
+  color: #fff;
+}
+.dark .filter.active {
+  background: linear-gradient(90deg, #2a6, #1f8);
+  color: #fff;
+}
+
+.dark #progressFill {
+  background: linear-gradient(90deg, #2ecc71, #1abc9c);
+}
+
+.dark .site-footer { color: #aaa; }
+
+.dark .toast {
+  background: #222;
+  color: #eee;
+}
 
 /* Responsive */
 @media (max-width:720px){
