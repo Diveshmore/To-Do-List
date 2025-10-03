@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Advanced To-Do List — Dashboard</title>
+
+  <!-- Optional: nice web font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <h1>My To-Do List</h1>
+      <div class="header-actions">
+        <button id="themeToggle" aria-pressed="false">🌙 Dark</button>
+      </div>
+    </div>
+    <p class="subtext">Click dashboard cards to filter. Tasks persist in your browser.</p>
+  </header>
+
+  <main class="container">
+
+    <!-- Dashboard -->
+    <section class="dashboard" aria-label="Dashboard">
+      <h2>📊 Dashboard</h2>
+      <div class="dashboard-cards" role="list">
+        <button class="card" data-filter="all" id="cardTotal" role="listitem" aria-pressed="false">
+          <div class="card-title">Total</div>
+          <div class="card-value" id="totalTasks">0</div>
+        </button>
+
+        <button class="card" data-filter="pending" id="cardPending" role="listitem" aria-pressed="false">
+          <div class="card-title">Pending</div>
+          <div class="card-value" id="pendingTasks">0</div>
+        </button>
+
+        <button class="card" data-filter="completed" id="cardCompleted" role="listitem" aria-pressed="false">
+          <div class="card-title">Completed</div>
+          <div class="card-value" id="completedTasks">0</div>
+        </button>
+
+        <button class="card" data-filter="overdue" id="cardOverdue" role="listitem" aria-pressed="false">
+          <div class="card-title">Overdue</div>
+          <div class="card-value" id="overdueTasks">0</div>
+        </button>
+
+        <button class="card" data-filter="today" id="cardToday" role="listitem" aria-pressed="false">
+          <div class="card-title">Due Today</div>
+          <div class="card-value" id="todayTasks">0</div>
+        </button>
+      </div>
+    </section>
+
+    <!-- Add Task -->
+    <section class="add-task" aria-label="Add task">
+      <input id="taskInput" type="text" placeholder="Enter task (e.g. Finish chapter 4)" aria-label="Task name">
+      <input id="deadlineInput" type="datetime-local" aria-label="Deadline">
+      <select id="categoryInput" aria-label="Category">
+        <option value="Work">Work</option>
+        <option value="Study">Study</option>
+        <option value="Personal">Personal</option>
+        <option value="Fitness">Fitness</option>
+      </select>
+      <button id="addBtn">Add Task</button>
+    </section>
+
+    <!-- Controls -->
+    <section class="controls" aria-label="Search and filters">
+      <input id="searchInput" type="search" placeholder="Search tasks..." aria-label="Search tasks">
+      <div class="filter-group" role="toolbar" aria-label="Quick filters">
+        <button class="filter" data-filter="all">All</button>
+        <button class="filter" data-filter="pending">Pending</button>
+        <button class="filter" data-filter="completed">Completed</button>
+      </div>
+    </section>
+
+    <!-- Progress -->
+    <section class="progress" aria-label="Progress">
+      <div class="progress-header">
+        <p id="progressText">0/0 tasks completed</p>
+      </div>
+      <div class="progress-bar" aria-hidden="true">
+        <div id="progressFill"></div>
+      </div>
+    </section>
+
+    <!-- Tasks Lists -->
+    <section class="tasks" id="tasksContainer" aria-label="Task lists">
+      <h2>Pending</h2>
+      <ul id="pendingList" class="task-list" aria-live="polite"></ul>
+
+      <h2 style="margin-top: 18px;">Completed</h2>
+      <ul id="completedList" class="task-list" aria-live="polite"></ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2025 My To-Do Website — Created by Divesh More</p>
+  </footer>
+
+  <!-- small in-page toast for nicer reminders -->
+  <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>

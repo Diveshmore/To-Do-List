@@ -1,0 +1,98 @@
+:root{
+  --bg: #f3f6fa;
+  --card: #ffffff;
+  --muted: #6c757d;
+  --accent: #1fa36c;
+  --danger: #ff4d4d;
+  --orange: #ff8c42;
+  --shadow: 0 8px 24px rgba(18, 38, 63, 0.08);
+  --glass: rgba(255,255,255,0.6);
+  --max-width: 1100px;
+  --radius: 12px;
+  --glass-dark: rgba(20,20,20,0.35);
+}
+
+*{box-sizing:border-box;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial;}
+
+html,body{height:100%;margin:0;background:var(--bg);color:#111;}
+.container{max-width:var(--max-width);margin:28px auto;padding:0 16px;}
+
+/* Header */
+.site-header{background:linear-gradient(135deg,#2bb673,#117a53);color:#fff;padding:22px 0;border-bottom-left-radius:16px;border-bottom-right-radius:16px;box-shadow:var(--shadow);}
+.header-inner{max-width:var(--max-width);margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.site-header h1{font-weight:600;margin:0;font-size:1.5rem;}
+.subtext{max-width:var(--max-width);margin:8px auto 0;padding:0 16px;color:rgba(255,255,255,0.9);font-size:0.95rem;opacity:0.95}
+
+/* Dashboard */
+.dashboard{margin-top:12px;background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);}
+.dashboard h2{margin:0 0 12px 0;font-size:1.05rem;}
+.dashboard-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;}
+.card{display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:center;padding:14px;border-radius:10px;background:linear-gradient(180deg,#fafafa,#f1f7f4);border:1px solid rgba(0,0,0,0.03);cursor:pointer;transition:transform .18s ease,box-shadow .18s ease;outline:none;}
+.card:hover{transform:translateY(-6px);box-shadow:0 10px 30px rgba(16,64,32,0.08);}
+.card.active{box-shadow:0 14px 34px rgba(16,64,32,0.14);transform:translateY(-8px);border:1px solid rgba(31,163,108,0.15);}
+
+.card-title{font-size:0.9rem;color:var(--muted)}
+.card-value{font-size:1.25rem;font-weight:700;color:#0b5132}
+
+/* Add task */
+.add-task{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:16px;margin-top:18px;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);}
+.add-task input[type="text"]{flex:2;min-width:200px;padding:12px;border-radius:10px;border:1px solid #e6e9ee;background:#fff;}
+.add-task input[type="datetime-local"]{flex:1;min-width:200px;padding:10px;border-radius:10px;border:1px solid #e6e9ee;background:#fff;}
+.add-task select{padding:10px;border-radius:10px;border:1px solid #e6e9ee;background:#fff;}
+.add-task button{padding:10px 16px;border-radius:10px;background:var(--accent);color:#fff;border:none;cursor:pointer;font-weight:600;box-shadow:0 6px 18px rgba(31,163,108,0.12);}
+
+/* Controls */
+.controls{display:flex;gap:10px;margin:16px 0;align-items:center;flex-wrap:wrap;}
+.controls input[type="search"]{flex:1;min-width:180px;padding:10px;border-radius:10px;border:1px solid #e6e9ee;}
+.filter-group{display:flex;gap:8px;}
+.filter{padding:8px 12px;border-radius:8px;background:#f1f3f5;border:none;cursor:pointer;}
+
+/* Progress */
+.progress{background:var(--card);padding:14px;border-radius:var(--radius);box-shadow:var(--shadow);}
+.progress-header{display:flex;justify-content:space-between;align-items:center;}
+.progress-bar{background:#ecf0f2;height:12px;border-radius:999px;margin-top:8px;overflow:hidden;}
+#progressFill{height:100%;width:0;transition:width .35s ease;background:linear-gradient(90deg,var(--accent),#32c38a);}
+
+/* Tasks */
+.tasks{background:var(--card);padding:16px;border-radius:var(--radius);box-shadow:var(--shadow);margin-top:18px;}
+.task-list{list-style:none;padding:0;margin:0;}
+.task-item{display:flex;align-items:center;justify-content:space-between;padding:12px;border-radius:10px;margin-bottom:10px;background:linear-gradient(180deg,#fff,#fbfffc);border:1px solid rgba(0,0,0,0.03);transition:transform .12s ease,box-shadow .12s ease;}
+.task-left{display:flex;align-items:center;gap:12px;min-width:0;}
+.task-left input[type="checkbox"]{width:18px;height:18px;}
+.task-meta{display:flex;flex-direction:column;min-width:0;}
+.task-title{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.task-sub{font-size:0.85rem;color:var(--muted);display:flex;gap:8px;align-items:center;margin-top:4px;flex-wrap:wrap;}
+.deadline-badge{font-size:0.82rem;padding:6px;border-radius:8px;background:#f6f9f6;color:#2a6b3a;border:1px solid rgba(20,110,55,0.06);}
+.deadline-overdue{background:#ffecec;color:#a02a2a;border:1px solid rgba(200,40,40,0.06);}
+.deadline-soon{background:#fff6ec;color:#7a4d00;border:1px solid rgba(200,130,30,0.06);}
+.category-pill{padding:5px 8px;border-radius:999px;font-size:0.78rem;color:#fff;}
+
+.task-actions{display:flex;gap:8px;align-items:center;}
+.delete-btn{background:var(--danger);color:#fff;padding:8px 10px;border-radius:8px;border:none;cursor:pointer}
+
+/* Small toast */
+.toast{position:fixed;right:20px;bottom:22px;background:#111;color:#fff;padding:12px 16px;border-radius:10px;transform:translateY(18px);opacity:0;transition:opacity .25s,transform .25s;z-index:1000;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);pointer-events:auto;}
+
+/* Footer */
+.site-footer{text-align:center;padding:18px;margin-top:22px;color:#555;font-size:0.92rem}
+
+/* Active filter / state */
+.filter.active, .card.active{background:linear-gradient(90deg,#e9fdf3,#e1fbef);}
+
+/* Dark mode */
+.dark{background:#0f1720;color:#e6eef0}
+.dark .site-header{background:linear-gradient(135deg,#0b3b2e,#072d24)}
+.dark .card{background:linear-gradient(180deg,#222,#1a1a1a);border:1px solid rgba(255,255,255,0.03)}
+.dark .add-task,.dark .controls,.dark .progress,.dark .tasks,.dark .dashboard{background:#12141a;color:#d9dde0}
+.dark .task-item{background:#0f1412;border:1px solid rgba(255,255,255,0.03)}
+.dark .progress-bar{background:#0d1113}
+.dark #progressFill{background:linear-gradient(90deg,#2db57c,#1ab06a)}
+
+/* Responsive */
+@media (max-width:720px){
+  .header-inner{flex-direction:column;align-items:flex-start;gap:10px}
+  .add-task{flex-direction:column;align-items:stretch}
+  .controls{flex-direction:column}
+  .card{padding:12px}
+}
